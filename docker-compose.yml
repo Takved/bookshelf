@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    networks:
+      - app-net
+  web:
+    build: .
+    command: bash -c "cd app && alembic upgrade head && uvicorn api:api --host 0.0.0.0"
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    networks:
+      - app-net
+    depends_on:
+      - db
+networks:
+    app-net:
